@@ -1,0 +1,1573 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SignumGDL - Música Católica</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+
+  <style>
+    /* ===========================
+       DESIGN TOKENS & BASE
+    =========================== */
+    :root {
+      --gold:        #b8973a;
+      --gold-light:  #d4b96a;
+      --gold-dark:   #8a6f28;
+      --cream:       #faf7f2;
+      --cream-dark:  #f0ebe0;
+      --charcoal:    #1e1e1e;
+      --text:        #333333;
+      --text-muted:  #6c6c6c;
+      --white:       #ffffff;
+      --shadow-sm:   0 2px 12px rgba(0,0,0,.07);
+      --shadow-md:   0 6px 28px rgba(0,0,0,.12);
+      --shadow-lg:   0 16px 48px rgba(0,0,0,.16);
+      --radius:      16px;
+      --radius-sm:   10px;
+      --transition:  .35s cubic-bezier(.4,0,.2,1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text);
+      background: var(--white);
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, h4, h5 {
+      font-family: 'Playfair Display', serif;
+      color: var(--charcoal);
+    }
+
+    /* ===========================
+       SCROLL FADE-IN (Intersection Observer)
+    =========================== */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity .7s ease, transform .7s ease;
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .fade-in-left {
+      opacity: 0;
+      transform: translateX(-40px);
+      transition: opacity .7s ease, transform .7s ease;
+    }
+    .fade-in-left.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    .fade-in-right {
+      opacity: 0;
+      transform: translateX(40px);
+      transition: opacity .7s ease, transform .7s ease;
+    }
+    .fade-in-right.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* ===========================
+       NAVBAR
+    =========================== */
+    #navbar {
+      background: transparent;
+      transition: background var(--transition), box-shadow var(--transition), padding var(--transition);
+      padding: 1.25rem 0;
+    }
+    #navbar.scrolled {
+      background: rgba(30,30,30,.96) !important;
+      box-shadow: 0 2px 20px rgba(0,0,0,.3);
+      padding: .65rem 0;
+    }
+    .navbar-brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--gold) !important;
+      letter-spacing: .04em;
+    }
+    .navbar-brand span { color: var(--white); }
+    .nav-link {
+      font-size: .9rem;
+      font-weight: 500;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.82) !important;
+      padding: .4rem .85rem !important;
+      position: relative;
+      transition: color var(--transition);
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 50%;
+      width: 0; height: 2px;
+      background: var(--gold);
+      transition: width var(--transition), left var(--transition);
+    }
+    .nav-link:hover { color: var(--gold) !important; }
+    .nav-link:hover::after { width: 70%; left: 15%; }
+    .navbar-toggler { border-color: var(--gold); }
+    .navbar-toggler-icon { filter: invert(1); }
+
+    /* ===========================
+       HERO SECTION
+    =========================== */
+    #hero {
+      min-height: 100vh;
+      background: linear-gradient(155deg, #0d0d0d 0%, #1a1208 50%, #0d0d0d 100%);
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+    #hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 50%, rgba(184,151,58,.12) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 80% at 80% 30%, rgba(184,151,58,.08) 0%, transparent 60%);
+    }
+    /* Decorative music staff lines */
+    #hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 38px,
+        rgba(184,151,58,.06) 38px,
+        rgba(184,151,58,.06) 39px
+      );
+    }
+    .hero-content { position: relative; z-index: 2; }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(184,151,58,.18);
+      border: 1px solid rgba(184,151,58,.4);
+      color: var(--gold-light);
+      font-size: .75rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      padding: .4rem 1.1rem;
+      border-radius: 50px;
+      margin-bottom: 1.5rem;
+    }
+    .hero-title {
+      font-size: clamp(3rem, 8vw, 6.5rem);
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1.05;
+      margin-bottom: .5rem;
+    }
+    .hero-title .accent { color: var(--gold); }
+    .hero-subtitle {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+      color: rgba(255,255,255,.55);
+      margin-bottom: 2rem;
+    }
+    .hero-description {
+      font-size: 1.05rem;
+      color: rgba(255,255,255,.7);
+      max-width: 560px;
+      line-height: 1.8;
+      margin-bottom: 2.5rem;
+    }
+    .btn-gold {
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+      color: var(--white);
+      border: none;
+      padding: .8rem 2rem;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: .9rem;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      transition: transform var(--transition), box-shadow var(--transition), filter var(--transition);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+    }
+    .btn-gold:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px rgba(184,151,58,.45);
+      filter: brightness(1.1);
+      color: var(--white);
+    }
+    .btn-outline-gold {
+      background: transparent;
+      color: var(--gold);
+      border: 2px solid var(--gold);
+      padding: .75rem 1.8rem;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: .9rem;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      transition: background var(--transition), color var(--transition), transform var(--transition);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+    }
+    .btn-outline-gold:hover {
+      background: var(--gold);
+      color: var(--white);
+      transform: translateY(-3px);
+    }
+
+    /* Hero placeholder logo box */
+    .hero-logo-box {
+      width: 320px;
+      height: 320px;
+      max-width: 100%;
+      border-radius: var(--radius);
+      border: 2px solid rgba(184,151,58,.3);
+      background: linear-gradient(135deg, rgba(184,151,58,.15) 0%, rgba(184,151,58,.05) 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-logo-box::before {
+      content: '';
+      position: absolute;
+      width: 200%;
+      height: 200%;
+      background: conic-gradient(from 0deg, transparent 0deg, rgba(184,151,58,.07) 60deg, transparent 120deg);
+      animation: rotateBg 12s linear infinite;
+    }
+    @keyframes rotateBg { to { transform: rotate(360deg); } }
+    .hero-logo-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 4rem;
+      font-weight: 700;
+      color: var(--gold);
+      position: relative;
+      z-index: 1;
+      line-height: 1;
+    }
+    .hero-logo-sub {
+      font-size: .8rem;
+      letter-spacing: .25em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.5);
+      position: relative;
+      z-index: 1;
+      margin-top: .3rem;
+    }
+    .hero-stats {
+      display: flex;
+      gap: 2.5rem;
+      margin-top: 1.5rem;
+    }
+    .hero-stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--gold);
+      line-height: 1;
+    }
+    .hero-stat-label {
+      font-size: .75rem;
+      color: rgba(255,255,255,.5);
+      text-transform: uppercase;
+      letter-spacing: .1em;
+    }
+    .scroll-indicator {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+      animation: bounce 2s infinite;
+      color: rgba(255,255,255,.4);
+      font-size: 1.4rem;
+      cursor: pointer;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(8px); }
+    }
+
+    /* ===========================
+       SECTION HELPERS
+    =========================== */
+    section { padding: 6rem 0; }
+    .section-label {
+      font-size: .72rem;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 600;
+      margin-bottom: .6rem;
+    }
+    .section-title {
+      font-size: clamp(2rem, 4vw, 3rem);
+      line-height: 1.15;
+      margin-bottom: 1rem;
+    }
+    .section-line {
+      width: 52px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--gold), transparent);
+      border-radius: 2px;
+      margin: 0 auto 1.5rem;
+    }
+    .section-line.start { margin: 0 0 1.5rem; }
+    .bg-cream { background: var(--cream); }
+    .bg-dark-section { background: #111; }
+
+    /* ===========================
+       QUIÉNES SOMOS
+    =========================== */
+    #quienes .quote-block {
+      border-left: 3px solid var(--gold);
+      padding: 1.25rem 1.5rem;
+      background: var(--cream);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 1.15rem;
+      color: var(--charcoal);
+      line-height: 1.7;
+      position: relative;
+    }
+    #quienes .quote-block::before {
+      content: '\201C';
+      font-size: 4rem;
+      color: var(--gold-light);
+      position: absolute;
+      top: -.5rem; left: .8rem;
+      opacity: .35;
+      font-family: 'Playfair Display', serif;
+      line-height: 1;
+    }
+    .stage-photo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto auto;
+      gap: 12px;
+    }
+    .stage-photo {
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+    }
+    .stage-photo:first-child {
+      grid-column: 1 / -1;
+    }
+    .stage-photo-inner {
+      width: 100%;
+      aspect-ratio: 16/9;
+      transition: transform var(--transition);
+    }
+    .stage-photo:first-child .stage-photo-inner { aspect-ratio: 21/9; }
+    .stage-photo:hover .stage-photo-inner { transform: scale(1.05); }
+    /* placeholder colors */
+    .ph-stage-1 { background: linear-gradient(135deg, #2a1f0e, #4a3520); display:flex; align-items:center; justify-content:center; }
+    .ph-stage-2 { background: linear-gradient(135deg, #1a2a1a, #2a4a2a); display:flex; align-items:center; justify-content:center; }
+    .ph-stage-3 { background: linear-gradient(135deg, #1a1a2a, #2a2a4a); display:flex; align-items:center; justify-content:center; }
+    .ph-label {
+      color: rgba(255,255,255,.45);
+      font-size: .78rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      text-align: center;
+      padding: .5rem;
+    }
+    .ph-icon { font-size: 2.5rem; color: rgba(255,255,255,.2); margin-bottom: .4rem; }
+
+    /* ===========================
+       GRUPO / MEMBERS
+    =========================== */
+    #grupo { background: var(--cream); }
+    .member-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: transform var(--transition), box-shadow var(--transition);
+      height: 100%;
+    }
+    .member-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-lg);
+    }
+    .member-photo {
+      height: 220px;
+      overflow: hidden;
+      position: relative;
+    }
+    .member-photo-inner {
+      width: 100%;
+      height: 100%;
+      transition: transform var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .member-card:hover .member-photo-inner { transform: scale(1.07); }
+    .member-body {
+      padding: 1.4rem;
+    }
+    .member-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: .15rem;
+    }
+    .member-role {
+      font-size: .8rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 600;
+      margin-bottom: .9rem;
+    }
+    .member-quote {
+      font-size: .88rem;
+      color: var(--text-muted);
+      font-style: italic;
+      line-height: 1.65;
+      border-top: 1px solid #eee;
+      padding-top: .9rem;
+    }
+    .member-song {
+      font-size: .76rem;
+      color: var(--gold-dark);
+      font-weight: 600;
+      margin-top: .5rem;
+    }
+    /* Member avatar colors */
+    .av-fer    { background: linear-gradient(135deg, #1a0e2e, #3d2060); }
+    .av-sandy  { background: linear-gradient(135deg, #0e1a2e, #204060); }
+    .av-emilio { background: linear-gradient(135deg, #0e1e0e, #204020); }
+    .av-luis   { background: linear-gradient(135deg, #1e1a0e, #4a4020); }
+    .av-may    { background: linear-gradient(135deg, #1e0e0e, #4a2020); }
+    .av-lucero { background: linear-gradient(135deg, #1e0e1e, #4a2040); }
+    .av-icon {
+      font-size: 4rem;
+      color: rgba(255,255,255,.22);
+    }
+
+    /* ===========================
+       DISCOGRAFÍA
+    =========================== */
+    #discografia { background: #111; }
+    #discografia .section-title { color: var(--white); }
+    #discografia .section-label { color: var(--gold-light); }
+    .album-card {
+      background: #1a1a1a;
+      border: 1px solid rgba(184,151,58,.15);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+      transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+    }
+    .album-card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-lg);
+      border-color: rgba(184,151,58,.45);
+    }
+    .album-cover {
+      width: 100%;
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .album-cover-inner {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: transform var(--transition);
+    }
+    .album-card:hover .album-cover-inner { transform: scale(1.04); }
+    .album-cover-1 { background: linear-gradient(160deg, #1c1200, #4a3408, #2a1c04); }
+    .album-cover-2 { background: linear-gradient(160deg, #080d1c, #142040, #081828); }
+    .album-cover-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--gold-light);
+      text-align: center;
+      padding: 0 1rem;
+      text-shadow: 0 2px 12px rgba(0,0,0,.8);
+    }
+    .album-cover-year {
+      font-size: .8rem;
+      color: rgba(255,255,255,.45);
+      letter-spacing: .15em;
+      margin-top: .4rem;
+    }
+    .album-body { padding: 1.6rem; }
+    .album-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      color: var(--gold-light);
+      margin-bottom: .2rem;
+    }
+    .album-year { font-size: .82rem; color: rgba(255,255,255,.4); margin-bottom: 1rem; }
+    .track-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 1.2rem;
+    }
+    .track-list li {
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      padding: .42rem 0;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      font-size: .85rem;
+      color: rgba(255,255,255,.65);
+      transition: color var(--transition);
+    }
+    .track-list li:hover { color: var(--gold-light); }
+    .track-num {
+      font-size: .72rem;
+      color: var(--gold-dark);
+      font-weight: 600;
+      min-width: 1.4rem;
+      text-align: right;
+    }
+    .buy-links { display: flex; gap: .7rem; flex-wrap: wrap; margin-top: 1rem; }
+    .btn-buy {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      padding: .5rem 1.1rem;
+      border-radius: 50px;
+      font-size: .8rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+    .btn-buy:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,.4); }
+    .btn-itunes { background: #fc3c44; color: #fff; }
+    .btn-maria  { background: #1e6bbf; color: #fff; }
+
+    /* ===========================
+       GALERÍA
+    =========================== */
+    #galeria { background: var(--cream-dark); }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+    }
+    .gallery-item {
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      aspect-ratio: 4/3;
+      position: relative;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+    }
+    .gallery-item-inner {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: .5rem;
+      transition: transform var(--transition);
+    }
+    .gallery-item:hover .gallery-item-inner { transform: scale(1.06); }
+    .gallery-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,.55);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity var(--transition);
+    }
+    .gallery-item:hover .gallery-overlay { opacity: 1; }
+    .gallery-overlay i { font-size: 2rem; color: var(--white); }
+    /* gallery placeholder colors */
+    .gi-1  { background: linear-gradient(135deg, #1a1208, #3a2a10); }
+    .gi-2  { background: linear-gradient(135deg, #0a1020, #1a2840); }
+    .gi-3  { background: linear-gradient(135deg, #100a20, #281840); }
+    .gi-4  { background: linear-gradient(135deg, #0a1a0a, #183018); }
+    .gi-5  { background: linear-gradient(135deg, #1a0808, #381018); }
+    .gi-6  { background: linear-gradient(135deg, #101820, #204050); }
+    .gi-7  { background: linear-gradient(135deg, #18100a, #382818); }
+    .gi-8  { background: linear-gradient(135deg, #0a0a18, #181830); }
+    .gi-9  { background: linear-gradient(135deg, #180a10, #381820); }
+    .gi-label {
+      color: rgba(255,255,255,.5);
+      font-size: .78rem;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      text-align: center;
+      padding: 0 .5rem;
+    }
+
+    /* ===========================
+       CONTACTO
+    =========================== */
+    #contacto { background: var(--charcoal); }
+    #contacto .section-title { color: var(--white); }
+    #contacto .section-label { color: var(--gold-light); }
+    #contacto p { color: rgba(255,255,255,.65); }
+    .contact-card {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(184,151,58,.18);
+      border-radius: var(--radius);
+      padding: 2rem;
+      height: 100%;
+      transition: border-color var(--transition), background var(--transition);
+    }
+    .contact-card:hover {
+      border-color: rgba(184,151,58,.5);
+      background: rgba(255,255,255,.07);
+    }
+    .contact-icon {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      color: var(--white);
+      margin-bottom: 1rem;
+    }
+    .contact-card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--white);
+      margin-bottom: .4rem;
+    }
+    .contact-card-text {
+      font-size: .9rem;
+      color: rgba(255,255,255,.55);
+      line-height: 1.6;
+    }
+    .contact-cta {
+      background: linear-gradient(135deg, rgba(184,151,58,.12), rgba(184,151,58,.04));
+      border: 1px solid rgba(184,151,58,.25);
+      border-radius: var(--radius);
+      padding: 3rem 2rem;
+      text-align: center;
+    }
+    .social-links { display: flex; gap: .8rem; flex-wrap: wrap; justify-content: center; margin-top: 1.5rem; }
+    .social-btn {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      text-decoration: none;
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+    .social-btn:hover { transform: translateY(-4px) scale(1.1); box-shadow: 0 8px 20px rgba(0,0,0,.4); }
+    .sb-facebook  { background: #1877f2; color: #fff; }
+    .sb-twitter   { background: #1da1f2; color: #fff; }
+    .sb-youtube   { background: #ff0000; color: #fff; }
+    .sb-instagram { background: linear-gradient(45deg, #f09433,#e6683c,#dc2743,#cc2366,#bc1888); color:#fff; }
+
+    /* ===========================
+       FOOTER
+    =========================== */
+    footer {
+      background: #080808;
+      border-top: 1px solid rgba(184,151,58,.15);
+      padding: 2.5rem 0 1.5rem;
+    }
+    .footer-brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--gold);
+    }
+    .footer-text { font-size: .85rem; color: rgba(255,255,255,.35); }
+    .footer-link {
+      font-size: .85rem;
+      color: rgba(255,255,255,.4);
+      text-decoration: none;
+      transition: color var(--transition);
+    }
+    .footer-link:hover { color: var(--gold); }
+    .footer-divider {
+      border-color: rgba(255,255,255,.08);
+      margin: 1.5rem 0 1rem;
+    }
+
+    /* ===========================
+       LIGHTBOX (pure CSS + JS)
+    =========================== */
+    #lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.93);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .3s ease;
+    }
+    #lightbox.open { opacity: 1; pointer-events: all; }
+    #lightbox-content {
+      max-width: 700px;
+      width: 90%;
+      background: #1a1a1a;
+      border-radius: var(--radius);
+      padding: 2rem;
+      position: relative;
+      transform: scale(.9);
+      transition: transform .3s ease;
+      text-align: center;
+    }
+    #lightbox.open #lightbox-content { transform: scale(1); }
+    #lightbox-close {
+      position: absolute;
+      top: 1rem; right: 1rem;
+      background: none;
+      border: none;
+      color: rgba(255,255,255,.6);
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: color var(--transition);
+    }
+    #lightbox-close:hover { color: var(--gold); }
+
+    /* ===========================
+       BACK TO TOP
+    =========================== */
+    #backToTop {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+      color: var(--white);
+      border: none;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity var(--transition), transform var(--transition), box-shadow var(--transition);
+      z-index: 1000;
+      box-shadow: 0 4px 16px rgba(184,151,58,.4);
+    }
+    #backToTop.visible { opacity: 1; transform: translateY(0); }
+    #backToTop:hover { box-shadow: 0 8px 24px rgba(184,151,58,.6); transform: translateY(-3px); }
+
+    /* ===========================
+       RESPONSIVE TWEAKS
+    =========================== */
+    @media (max-width: 767px) {
+      section { padding: 4rem 0; }
+      .hero-stats { gap: 1.5rem; }
+      .hero-logo-box { width: 220px; height: 220px; }
+      .hero-logo-text { font-size: 3rem; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- =============================================
+       NAVBAR
+  ============================================= -->
+  <nav id="navbar" class="navbar navbar-expand-lg fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="#hero">Signum<span>GDL</span></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu"
+        aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav ms-auto gap-lg-1">
+          <li class="nav-item"><a class="nav-link" href="#quienes">Signum</a></li>
+          <li class="nav-item"><a class="nav-link" href="#grupo">Grupo</a></li>
+          <li class="nav-item"><a class="nav-link" href="#discografia">Discografía</a></li>
+          <li class="nav-item"><a class="nav-link" href="#galeria">Galería</a></li>
+          <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- =============================================
+       HERO
+  ============================================= -->
+  <section id="hero">
+    <div class="container hero-content">
+      <div class="row align-items-center gy-5">
+
+        <!-- Left: text -->
+        <div class="col-lg-7">
+          <div class="hero-badge fade-in">
+            <i class="bi bi-music-note-beamed me-1"></i> Música Católica · Desde 2006
+          </div>
+          <h1 class="hero-title fade-in" style="transition-delay:.1s">
+            <span class="accent">Signum</span><br />GDL
+          </h1>
+          <p class="hero-subtitle fade-in" style="transition-delay:.2s">Honrando a Dios a través del canto</p>
+          <p class="hero-description fade-in" style="transition-delay:.3s">
+            Somos un proyecto de música católica nacido en Guadalajara en 2006.
+            Dios nos fue uniendo a cada uno en el camino para poder honrarle
+            a través de nuestra música y nuestro canto.
+          </p>
+          <div class="d-flex flex-wrap gap-3 fade-in" style="transition-delay:.4s">
+            <a href="#discografia" class="btn-gold">
+              <i class="bi bi-disc"></i> Nuestra Música
+            </a>
+            <a href="#contacto" class="btn-outline-gold">
+              <i class="bi bi-envelope"></i> Contáctanos
+            </a>
+          </div>
+          <div class="hero-stats fade-in" style="transition-delay:.5s">
+            <div>
+              <div class="hero-stat-num">20<span style="font-size:1.2rem">+</span></div>
+              <div class="hero-stat-label">Años de Ministerio</div>
+            </div>
+            <div>
+              <div class="hero-stat-num">2</div>
+              <div class="hero-stat-label">Álbumes</div>
+            </div>
+            <div>
+              <div class="hero-stat-num">6</div>
+              <div class="hero-stat-label">Integrantes</div>
+            </div>
+            <div>
+              <div class="hero-stat-num">25</div>
+              <div class="hero-stat-label">Canciones</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: logo visual -->
+        <div class="col-lg-5 d-flex justify-content-center fade-in-right" style="transition-delay:.3s">
+          <div class="hero-logo-box">
+            <div class="hero-logo-text">S</div>
+            <div class="hero-logo-sub">Signum · GDL</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="scroll-indicator" onclick="document.getElementById('quienes').scrollIntoView({behavior:'smooth'})">
+      <i class="bi bi-chevron-double-down"></i>
+    </div>
+  </section>
+
+  <!-- =============================================
+       QUIÉNES SOMOS
+  ============================================= -->
+  <section id="quienes">
+    <div class="container">
+      <div class="row gy-5 align-items-center">
+
+        <!-- Left: text -->
+        <div class="col-lg-6">
+          <div class="section-label fade-in">
+            <i class="bi bi-cross me-1"></i> Quiénes Somos
+          </div>
+          <h2 class="section-title fade-in" style="transition-delay:.1s">Un proyecto<br />de fe y música</h2>
+          <div class="section-line start fade-in" style="transition-delay:.15s"></div>
+
+          <p class="fade-in" style="transition-delay:.2s; color:var(--text-muted); line-height:1.9;">
+            Signum es un grupo de música católica con sede en Guadalajara, México.
+            Nuestro nombre, que significa <em>"señal"</em> en latín, refleja nuestro deseo de ser
+            instrumentos visibles del amor de Dios en el mundo.
+          </p>
+
+          <div class="quote-block fade-in" style="transition-delay:.3s;">
+            "Dios nos fue uniendo a cada uno de los integrantes en el camino,
+            para poder realizar este proyecto y honrarle a través de nuestro canto."
+          </div>
+
+          <p class="mt-4 fade-in" style="transition-delay:.4s; color:var(--text-muted); line-height:1.9;">
+            Desde 2006 hemos tenido la bendición de servir en comunidades, misas y conciertos,
+            compartiendo nuestra fe y nuestra música con miles de personas. Cada nota que tocamos
+            es una oración, cada canción una ofrenda.
+          </p>
+
+          <div class="d-flex flex-wrap gap-3 mt-4 fade-in" style="transition-delay:.5s">
+            <div class="d-flex align-items-center gap-2 text-muted small">
+              <i class="bi bi-geo-alt-fill text-warning"></i> Guadalajara, México
+            </div>
+            <div class="d-flex align-items-center gap-2 text-muted small">
+              <i class="bi bi-calendar-heart-fill text-warning"></i> Fundado en 2006
+            </div>
+            <div class="d-flex align-items-center gap-2 text-muted small">
+              <i class="bi bi-music-note-list text-warning"></i> Género: Católico / Cristiano
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: stage photos grid -->
+        <div class="col-lg-6">
+          <div class="stage-photo-grid fade-in-right" style="transition-delay:.2s">
+            <div class="stage-photo">
+              <div class="stage-photo-inner ph-stage-1">
+                <div class="ph-icon"><i class="bi bi-people-fill"></i></div>
+                <div class="ph-label">Signum en el escenario — todos los integrantes</div>
+              </div>
+            </div>
+            <div class="stage-photo">
+              <div class="stage-photo-inner ph-stage-2">
+                <div class="ph-icon"><i class="bi bi-piano"></i></div>
+                <div class="ph-label">Fer — Teclado / La Salle</div>
+              </div>
+            </div>
+            <div class="stage-photo">
+              <div class="stage-photo-inner ph-stage-3">
+                <div class="ph-icon"><i class="bi bi-music-note-beamed"></i></div>
+                <div class="ph-label">Sandy — Guitarra / Ensayo</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================================
+       GRUPO — INTEGRANTES
+  ============================================= -->
+  <section id="grupo">
+    <div class="container">
+      <div class="text-center mb-5">
+        <div class="section-label fade-in"><i class="bi bi-people me-1"></i> Integrantes</div>
+        <h2 class="section-title fade-in" style="transition-delay:.1s">El Grupo</h2>
+        <div class="section-line fade-in" style="transition-delay:.15s"></div>
+        <p class="text-muted fade-in" style="transition-delay:.2s; max-width:520px; margin:0 auto; line-height:1.8;">
+          Seis músicos unidos por la fe y el amor a Dios, cada uno aportando su talento
+          para crear algo más grande que la suma de sus partes.
+        </p>
+      </div>
+
+      <div class="row g-4">
+
+        <!-- Fernando -->
+        <div class="col-md-6 col-lg-4 fade-in" style="transition-delay:.1s">
+          <div class="member-card">
+            <div class="member-photo">
+              <div class="member-photo-inner av-fer">
+                <i class="bi bi-person-fill av-icon"></i>
+              </div>
+            </div>
+            <div class="member-body">
+              <div class="member-name">Fernando "Fer"</div>
+              <div class="member-role"><i class="bi bi-music-note me-1"></i>Teclado / Piano</div>
+              <div class="member-quote">
+                "Como llama en el corazón encendiste la fe que ilumina mi vida"
+              </div>
+              <div class="member-song"><i class="bi bi-vinyl me-1"></i>Como llama en el corazón</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sandy -->
+        <div class="col-md-6 col-lg-4 fade-in" style="transition-delay:.2s">
+          <div class="member-card">
+            <div class="member-photo">
+              <div class="member-photo-inner av-sandy">
+                <i class="bi bi-person-fill av-icon"></i>
+              </div>
+            </div>
+            <div class="member-body">
+              <div class="member-name">Sandy</div>
+              <div class="member-role"><i class="bi bi-music-note me-1"></i>Guitarra</div>
+              <div class="member-quote">
+                "Tus caminos seguiré sin pensarlo sin temer"
+              </div>
+              <div class="member-song"><i class="bi bi-vinyl me-1"></i>Tus caminos seguiré</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Emilio -->
+        <div class="col-md-6 col-lg-4 fade-in" style="transition-delay:.3s">
+          <div class="member-card">
+            <div class="member-photo">
+              <div class="member-photo-inner av-emilio">
+                <i class="bi bi-person-fill av-icon"></i>
+              </div>
+            </div>
+            <div class="member-body">
+              <div class="member-name">Emilio</div>
+              <div class="member-role"><i class="bi bi-music-note me-1"></i>Percusión</div>
+              <div class="member-quote">
+                "Yo escucharé tu voz y la haré escuchar por ti"
+              </div>
+              <div class="member-song"><i class="bi bi-vinyl me-1"></i>A tu encuentro</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Luis -->
+        <div class="col-md-6 col-lg-4 fade-in" style="transition-delay:.1s">
+          <div class="member-card">
+            <div class="member-photo">
+              <div class="member-photo-inner av-luis">
+                <i class="bi bi-person-fill av-icon"></i>
+              </div>
+            </div>
+            <div class="member-body">
+              <div class="member-name">Luis</div>
+              <div class="member-role"><i class="bi bi-music-note me-1"></i>Bajo</div>
+              <div class="member-quote">
+                "Quédate conmigo y que a través de mí te vean solamente a ti"
+              </div>
+              <div class="member-song"><i class="bi bi-vinyl me-1"></i>Irradiando a Cristo</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Daniel "May" -->
+        <div class="col-md-6 col-lg-4 fade-in" style="transition-delay:.2s">
+          <div class="member-card">
+            <div class="member-photo">
+              <div class="member-photo-inner av-may">
+                <i class="bi bi-person-fill av-icon"></i>
+              </div>
+            </div>
+            <div class="member-body">
+              <div class="member-name">Daniel "May"</div>
+              <div class="member-role"><i class="bi bi-music-note me-1"></i>Batería</div>
+              <div class="member-quote">
+                "Primero Dios fue la razón, fuego que ardió..."
+              </div>
+              <div class="member-song"><i class="bi bi-vinyl me-1"></i>Primero Dios</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lucero -->
+        <div class="col-md-6 col-lg-4 fade-in" style="transition-delay:.3s">
+          <div class="member-card">
+            <div class="member-photo">
+              <div class="member-photo-inner av-lucero">
+                <i class="bi bi-person-fill av-icon"></i>
+              </div>
+            </div>
+            <div class="member-body">
+              <div class="member-name">Lucero</div>
+              <div class="member-role"><i class="bi bi-mic-fill me-1"></i>Voz Principal</div>
+              <div class="member-quote">
+                "Ven y vive en mí... Siembra y crece en mí"
+              </div>
+              <div class="member-song"><i class="bi bi-vinyl me-1"></i>Vive en mí</div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /row -->
+    </div>
+  </section>
+
+  <!-- =============================================
+       DISCOGRAFÍA
+  ============================================= -->
+  <section id="discografia">
+    <div class="container">
+      <div class="text-center mb-5">
+        <div class="section-label fade-in"><i class="bi bi-disc me-1"></i> Discografía</div>
+        <h2 class="section-title fade-in" style="transition-delay:.1s">Nuestra Música</h2>
+        <div class="section-line fade-in" style="transition-delay:.15s"></div>
+        <p class="fade-in" style="transition-delay:.2s; max-width:520px; margin:0 auto; line-height:1.8; color:rgba(255,255,255,.55);">
+          Dos álbumes que son el fruto de años de oración, trabajo y amor a Dios.
+          Disponibles en plataformas digitales.
+        </p>
+      </div>
+
+      <div class="row g-4 justify-content-center">
+
+        <!-- Album 1: Quiero ser tu luz -->
+        <div class="col-lg-5 fade-in-left" style="transition-delay:.1s">
+          <div class="album-card">
+            <div class="album-cover album-cover-1">
+              <div class="album-cover-inner">
+                <div style="font-size:4rem; color:rgba(184,151,58,.3); margin-bottom:.5rem;">
+                  <i class="bi bi-sun-fill"></i>
+                </div>
+                <div class="album-cover-title">Quiero ser tu luz</div>
+                <div class="album-cover-year">2007</div>
+              </div>
+            </div>
+            <div class="album-body">
+              <div class="album-title">Quiero ser tu luz</div>
+              <div class="album-year"><i class="bi bi-calendar3 me-1"></i>2007 · 14 canciones</div>
+              <ul class="track-list">
+                <li><span class="track-num">01</span> A tu encuentro</li>
+                <li><span class="track-num">02</span> Irradiando a Cristo</li>
+                <li><span class="track-num">03</span> El gozo de servirte</li>
+                <li><span class="track-num">04</span> Primero Dios</li>
+                <li><span class="track-num">05</span> Misericordia no sacrificios</li>
+                <li><span class="track-num">06</span> El hombre de la cruz</li>
+                <li><span class="track-num">07</span> Quiero ser tu luz</li>
+                <li><span class="track-num">08</span> De vuelta a casa</li>
+                <li><span class="track-num">09</span> Vestida de Sol</li>
+                <li><span class="track-num">10</span> Contigo y en Ti</li>
+                <li><span class="track-num">11</span> Como llama en el corazón</li>
+                <li><span class="track-num">12</span> Alma Misionera</li>
+                <li><span class="track-num">13</span> Cada día que nace</li>
+                <li><span class="track-num">14</span> Recuerdos del Ayer</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Album 2: Puerta del Cielo -->
+        <div class="col-lg-5 fade-in-right" style="transition-delay:.1s">
+          <div class="album-card">
+            <div class="album-cover album-cover-2">
+              <div class="album-cover-inner">
+                <div style="font-size:4rem; color:rgba(100,140,220,.35); margin-bottom:.5rem;">
+                  <i class="bi bi-cloud-fill"></i>
+                </div>
+                <div class="album-cover-title">Puerta del Cielo</div>
+                <div class="album-cover-year">2012</div>
+              </div>
+            </div>
+            <div class="album-body">
+              <div class="album-title">Puerta del Cielo</div>
+              <div class="album-year"><i class="bi bi-calendar3 me-1"></i>2012 · 11 canciones</div>
+              <ul class="track-list">
+                <li><span class="track-num">01</span> Eres nuestra Madre</li>
+                <li><span class="track-num">02</span> Hágase en Mí</li>
+                <li><span class="track-num">03</span> Pincelada</li>
+                <li><span class="track-num">04</span> Dulce Madre</li>
+                <li><span class="track-num">05</span> Más Blanca que la nieve</li>
+                <li><span class="track-num">06</span> Toma mi corazón</li>
+                <li><span class="track-num">07</span> Madre eres Ternura</li>
+                <li><span class="track-num">08</span> Puerta del Cielo</li>
+                <li><span class="track-num">09</span> Por el Impulso de tu Fe</li>
+                <li><span class="track-num">10</span> Ave María</li>
+                <li><span class="track-num">11</span> Pureza Infinita</li>
+              </ul>
+              <div class="buy-links">
+                <a href="https://itunes.apple.com/us/album/mas-blanca-que-la-nieve/id498031403"
+                   target="_blank" rel="noopener" class="btn-buy btn-itunes">
+                  <i class="bi bi-apple"></i> iTunes
+                </a>
+                <a href="http://mariavision.com/tienda/producto.php?c=27&id=775"
+                   target="_blank" rel="noopener" class="btn-buy btn-maria">
+                  <i class="bi bi-cart3"></i> Mariavision
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /row -->
+    </div>
+  </section>
+
+  <!-- =============================================
+       GALERÍA
+  ============================================= -->
+  <section id="galeria">
+    <div class="container">
+      <div class="text-center mb-5">
+        <div class="section-label fade-in"><i class="bi bi-images me-1"></i> Galería</div>
+        <h2 class="section-title fade-in" style="transition-delay:.1s">Momentos</h2>
+        <div class="section-line fade-in" style="transition-delay:.15s"></div>
+        <p class="text-muted fade-in" style="transition-delay:.2s; max-width:520px; margin:0 auto; line-height:1.8;">
+          Fragmentos de nuestra historia: conciertos, ensayos, misas y momentos de comunidad.
+        </p>
+      </div>
+
+      <div class="gallery-grid">
+
+        <div class="gallery-item fade-in" style="transition-delay:.05s" data-title="Concierto en La Salle" data-desc="El grupo completo en el escenario durante un concierto en La Salle, Guadalajara.">
+          <div class="gallery-item-inner gi-1">
+            <i class="bi bi-people-fill" style="font-size:2.5rem; color:rgba(255,255,255,.2)"></i>
+            <span style="font-size:.75rem; color:rgba(255,255,255,.4); letter-spacing:.08em;">Concierto · La Salle</span>
+          </div>
+          <div class="gallery-overlay"><i class="bi bi-zoom-in"></i></div>
+        </div>
+
+        <div class="gallery-item fade-in" style="transition-delay:.1s" data-title="Fer en el teclado" data-desc="Fernando durante el ensayo general previo al concierto en La Salle.">
+          <div class="gallery-item-inner gi-2">
+            <i class="bi bi-piano" style="font-size:2.5rem; color:rgba(255,255,255,.2)"></i>
+            <span style="font-size:.75rem; color:rgba(255,255,255,.4); letter-spacing:.08em;">Fer · Teclado</span>
+          </div>
+          <div class="gallery-overlay"><i class="bi bi-zoom-in"></i></div>
+        </div>
+
+        <div class="gallery-item fade-in" style="transition-delay:.15s" data-title="Sandy con la guitarra" data-desc="Sandy practicando guitarra en el ensayo de La Salle.">
+          <div class="gallery-item-inner gi-3">
+            <i class="bi bi-music-note-beamed" style="font-size:2.5rem; color:rgba(255,255,255,.2)"></i>
+            <span style="font-size:.75rem; color:rgba(255,255,255,.4); letter-spacing:.08em;">Sandy · Guitarra</span>
+          </div>
+          <div class="gallery-overlay"><i class="bi bi-zoom-in"></i></div>
+        </div>
+
+        <div class="gallery-item fade-in" style="transition-delay:.2s" data-title="Ensayo general" data-desc="El grupo durante un ensayo completo antes de una misa especial.">
+          <div class="gallery-item-inner gi-4">
+            <i class="bi bi-soundwave" style="font-size:2.5rem; color:rgba(255,255,255,.2)"></i>
+            <span style="font-size:.75rem; color:rgba(255,255,255,.4); letter-spacing:.08em;">Ensayo General</span>
+          </div>
+          <div class="gallery-overlay"><i class="bi bi-zoom-in"></i></div>
+        </div>
+
+        <div class="gallery-item fade-in" style="transition-delay:.25s" data-title="Lucero en el micrófono" data-desc="Lucero interpretando una canción en vivo, voz principal del grupo.">
+          <div class="gallery-item-inner gi-5">
+            <i class="bi bi-mic-fill" style="font-size:2.5rem; color:rgba(255,255,255,.2)"></i>
+            <span style="font-size:.75rem; color:rgba(255,255,255,.4); letter-spacing:.08em;">Lucero · Voz</span>
+          </div>
+          <div class="gallery-overlay"><i class="bi bi-zoom-in"></i></div>
+        </div>
+
+        <div class="gallery-item fade-in" style="transition-delay:.3s" data-title="Batería en acción" data-desc="Daniel 'May' ejecutando el ritmo durante una actuación en vivo.">
+          <div class="gallery-item-inner gi-6">
+            <i class="bi bi-circle-fill" style="font-size:2.5rem; color:rgba(255,255,255,.2)"></i>
+            <span style="font-size:.75rem; color:rgba(255,255,255,.4); letter-spacing:.08em;">May · Batería</span>
+          </div>
+          <div class="gallery-overlay"><i class="bi bi-zoom-in"></i></div>
+        </div>
+
+        <div class="gallery-item fade-in" style="transition-delay:.35s" data-title="Luis al bajo" data-desc="Luis tocando el bajo eléctrico en un concierto de música católica.">
+          <div class="gallery-item-inner gi-7">
+            <i class="bi bi-music-note" style="font-size:2.5rem; color:rgba(255,255,255,.2)"></i>
+            <span style="font-size:.75rem; color:rgba(255,255,255,.4); letter-spacing:.08em;">Luis · Bajo</span>
+          </div>
+          <div class="gallery-overlay"><i class="bi bi-zoom-in"></i></div>
+        </div>
+
+        <div class="gallery-item fade-in" style="transition-delay:.4s" data-title="Emilio — Percusión" data-desc="Emilio en la percusión durante una misa especial.">
+          <div class="gallery-item-inner gi-8">
+            <i class="bi bi-speaker-fill" style="font-size:2.5rem; color:rgba(255,255,255,.2)"></i>
+            <span style="font-size:.75rem; color:rgba(255,255,255,.4); letter-spacing:.08em;">Emilio · Percusión</span>
+          </div>
+          <div class="gallery-overlay"><i class="bi bi-zoom-in"></i></div>
+        </div>
+
+        <div class="gallery-item fade-in" style="transition-delay:.45s" data-title="Comunidad reunida" data-desc="La comunidad reunida en oración y música durante un evento de Signum.">
+          <div class="gallery-item-inner gi-9">
+            <i class="bi bi-heart-fill" style="font-size:2.5rem; color:rgba(255,255,255,.2)"></i>
+            <span style="font-size:.75rem; color:rgba(255,255,255,.4); letter-spacing:.08em;">Comunidad · Fe</span>
+          </div>
+          <div class="gallery-overlay"><i class="bi bi-zoom-in"></i></div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- =============================================
+       CONTACTO
+  ============================================= -->
+  <section id="contacto">
+    <div class="container">
+      <div class="text-center mb-5">
+        <div class="section-label fade-in"><i class="bi bi-envelope me-1"></i> Contacto</div>
+        <h2 class="section-title fade-in" style="transition-delay:.1s">Escríbenos</h2>
+        <div class="section-line fade-in" style="transition-delay:.15s"></div>
+        <p class="fade-in" style="transition-delay:.2s; max-width:540px; margin:0 auto; line-height:1.8; color:rgba(255,255,255,.55);">
+          ¿Deseas un concierto en tu comunidad? ¿Quieres que toquemos en tu misa?
+          ¡Contáctanos! Puedes encontrarnos en nuestras redes sociales.
+        </p>
+      </div>
+
+      <div class="row g-4 mb-5">
+
+        <!-- Card: conciertos -->
+        <div class="col-md-4 fade-in" style="transition-delay:.1s">
+          <div class="contact-card">
+            <div class="contact-icon"><i class="bi bi-music-note-list"></i></div>
+            <div class="contact-card-title">Conciertos</div>
+            <div class="contact-card-text">
+              ¿Quieres que Signum se presente en tu parroquia, comunidad o evento?
+              Escríbenos y coordinamos los detalles.
+            </div>
+          </div>
+        </div>
+
+        <!-- Card: misas -->
+        <div class="col-md-4 fade-in" style="transition-delay:.2s">
+          <div class="contact-card">
+            <div class="contact-icon"><i class="bi bi-peace-fill"></i></div>
+            <div class="contact-card-title">Música en tu Misa</div>
+            <div class="contact-card-text">
+              Ponemos nuestra música al servicio de la liturgia.
+              Contáctanos para animar la celebración eucarística de tu comunidad.
+            </div>
+          </div>
+        </div>
+
+        <!-- Card: redes -->
+        <div class="col-md-4 fade-in" style="transition-delay:.3s">
+          <div class="contact-card">
+            <div class="contact-icon"><i class="bi bi-share-fill"></i></div>
+            <div class="contact-card-title">Redes Sociales</div>
+            <div class="contact-card-text">
+              Síguenos en nuestras redes sociales para estar al tanto de nuestros
+              próximos eventos, lanzamientos y contenidos de fe.
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- CTA con redes sociales -->
+      <div class="contact-cta fade-in" style="transition-delay:.4s">
+        <div class="section-label" style="justify-content:center; display:flex; margin-bottom:.5rem">
+          Síguenos en nuestras redes sociales
+        </div>
+        <h3 style="color:var(--white); font-size:1.8rem; margin-bottom:.5rem;">
+          Únete a la comunidad Signum
+        </h3>
+        <p style="color:rgba(255,255,255,.5); max-width:480px; margin:0 auto 1rem; font-size:.95rem; line-height:1.7;">
+          Puedes ponerte en contacto con nosotros a través de nuestras redes sociales.
+          Estamos activos en Facebook, Twitter y YouTube.
+        </p>
+        <div class="social-links">
+          <a href="https://www.facebook.com/SignumOficial" target="_blank" rel="noopener"
+             class="social-btn sb-facebook" title="Facebook">
+            <i class="bi bi-facebook"></i>
+          </a>
+          <a href="https://twitter.com/signumoficial" target="_blank" rel="noopener"
+             class="social-btn sb-twitter" title="Twitter / X">
+            <i class="bi bi-twitter-x"></i>
+          </a>
+          <a href="https://www.youtube.com/user/Fnd8" target="_blank" rel="noopener"
+             class="social-btn sb-youtube" title="YouTube">
+            <i class="bi bi-youtube"></i>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- =============================================
+       FOOTER
+  ============================================= -->
+  <footer>
+    <div class="container">
+      <div class="row align-items-center gy-3">
+        <div class="col-md-4 text-center text-md-start">
+          <div class="footer-brand">SignumGDL</div>
+          <div class="footer-text mt-1">Música Católica · Guadalajara, México</div>
+        </div>
+        <div class="col-md-4 text-center">
+          <div class="d-flex justify-content-center gap-3">
+            <a href="#quienes" class="footer-link">Signum</a>
+            <a href="#grupo" class="footer-link">Grupo</a>
+            <a href="#discografia" class="footer-link">Discografía</a>
+            <a href="#galeria" class="footer-link">Galería</a>
+            <a href="#contacto" class="footer-link">Contacto</a>
+          </div>
+        </div>
+        <div class="col-md-4 text-center text-md-end">
+          <div class="d-flex justify-content-center justify-content-md-end gap-2">
+            <a href="https://www.facebook.com/SignumOficial" target="_blank" rel="noopener"
+               class="footer-link fs-5"><i class="bi bi-facebook"></i></a>
+            <a href="https://twitter.com/signumoficial" target="_blank" rel="noopener"
+               class="footer-link fs-5"><i class="bi bi-twitter-x"></i></a>
+            <a href="https://www.youtube.com/user/Fnd8" target="_blank" rel="noopener"
+               class="footer-link fs-5"><i class="bi bi-youtube"></i></a>
+          </div>
+        </div>
+      </div>
+      <hr class="footer-divider" />
+      <div class="text-center footer-text">
+        Copyright &copy; <span id="year"></span> SignumGDL · Todos los derechos reservados
+      </div>
+    </div>
+  </footer>
+
+  <!-- =============================================
+       LIGHTBOX MODAL
+  ============================================= -->
+  <div id="lightbox" role="dialog" aria-modal="true" aria-labelledby="lightbox-title">
+    <div id="lightbox-content">
+      <button id="lightbox-close" aria-label="Cerrar"><i class="bi bi-x-lg"></i></button>
+      <div id="lightbox-visual" style="height:220px; border-radius:12px; margin-bottom:1.2rem; display:flex; align-items:center; justify-content:center;">
+        <i class="bi bi-image" style="font-size:4rem; color:rgba(255,255,255,.2)"></i>
+      </div>
+      <h4 id="lightbox-title" style="color:var(--gold-light); font-family:'Playfair Display',serif;"></h4>
+      <p id="lightbox-desc" style="color:rgba(255,255,255,.55); font-size:.9rem; line-height:1.7;"></p>
+    </div>
+  </div>
+
+  <!-- BACK TO TOP -->
+  <button id="backToTop" aria-label="Volver arriba">
+    <i class="bi bi-chevron-up"></i>
+  </button>
+
+  <!-- Bootstrap 5 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    /* =============================================
+       NAVBAR: shrink on scroll
+    ============================================= */
+    const navbar = document.getElementById('navbar');
+    const onScroll = () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 60);
+      document.getElementById('backToTop').classList.toggle('visible', window.scrollY > 400);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    /* =============================================
+       INTERSECTION OBSERVER: fade-in animations
+    ============================================= */
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.fade-in, .fade-in-left, .fade-in-right')
+      .forEach(el => io.observe(el));
+
+    /* =============================================
+       SMOOTH SCROLL for nav links
+    ============================================= */
+    document.querySelectorAll('a[href^="#"]').forEach(link => {
+      link.addEventListener('click', e => {
+        const target = document.querySelector(link.getAttribute('href'));
+        if (!target) return;
+        e.preventDefault();
+        // close mobile menu if open
+        const menu = document.getElementById('navMenu');
+        if (menu.classList.contains('show')) {
+          bootstrap.Collapse.getInstance(menu)?.hide();
+        }
+        const offset = navbar.offsetHeight + 8;
+        const top = target.getBoundingClientRect().top + window.scrollY - offset;
+        window.scrollTo({ top, behavior: 'smooth' });
+      });
+    });
+
+    /* =============================================
+       BACK TO TOP button
+    ============================================= */
+    document.getElementById('backToTop').addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    /* =============================================
+       GALLERY LIGHTBOX
+    ============================================= */
+    const lightbox     = document.getElementById('lightbox');
+    const lbTitle      = document.getElementById('lightbox-title');
+    const lbDesc       = document.getElementById('lightbox-desc');
+    const lbVisual     = document.getElementById('lightbox-visual');
+    const lbClose      = document.getElementById('lightbox-close');
+
+    // map gallery item class → bg gradient
+    const galBg = {
+      'gi-1':'linear-gradient(135deg,#1a1208,#3a2a10)',
+      'gi-2':'linear-gradient(135deg,#0a1020,#1a2840)',
+      'gi-3':'linear-gradient(135deg,#100a20,#281840)',
+      'gi-4':'linear-gradient(135deg,#0a1a0a,#183018)',
+      'gi-5':'linear-gradient(135deg,#1a0808,#381018)',
+      'gi-6':'linear-gradient(135deg,#101820,#204050)',
+      'gi-7':'linear-gradient(135deg,#18100a,#382818)',
+      'gi-8':'linear-gradient(135deg,#0a0a18,#181830)',
+      'gi-9':'linear-gradient(135deg,#180a10,#381820)',
+    };
+
+    document.querySelectorAll('.gallery-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const title = item.dataset.title || '';
+        const desc  = item.dataset.desc  || '';
+        lbTitle.textContent = title;
+        lbDesc.textContent  = desc;
+        // find bg class
+        const inner = item.querySelector('.gallery-item-inner');
+        let bg = '#222';
+        for (const cls of inner.classList) {
+          if (galBg[cls]) { bg = galBg[cls]; break; }
+        }
+        lbVisual.style.background = bg;
+        lightbox.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      });
+    });
+
+    const closeLightbox = () => {
+      lightbox.classList.remove('open');
+      document.body.style.overflow = '';
+    };
+
+    lbClose.addEventListener('click', closeLightbox);
+    lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+    /* =============================================
+       FOOTER YEAR
+    ============================================= */
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    /* =============================================
+       ACTIVE NAV LINK via scroll position
+    ============================================= */
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-link');
+
+    const ioNav = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          navLinks.forEach(l => l.classList.remove('active'));
+          const active = document.querySelector(`.nav-link[href="#${e.target.id}"]`);
+          if (active) active.classList.add('active');
+        }
+      });
+    }, { threshold: 0.4 });
+
+    sections.forEach(s => ioNav.observe(s));
+  </script>
+
+</body>
+</html>
