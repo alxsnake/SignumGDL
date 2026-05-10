@@ -806,6 +806,35 @@ footer {
     grid-template-columns: 1fr 1fr;
     gap: 1.25rem 2rem;
   }
+
+  /* ---- Quiénes Somos: oscuro en móvil ---- */
+  #quienes {
+    background: #0d0c09;
+  }
+  #quienes .section-title {
+    color: var(--white);
+  }
+  #quienes p {
+    color: rgba(255,255,255,.68) !important;
+  }
+  #quienes .quote-block {
+    background: rgba(255,255,255,.06);
+    color: rgba(255,255,255,.82);
+  }
+  #quienes .text-muted {
+    color: rgba(255,255,255,.5) !important;
+  }
+
+  /* ---- Galería: oscuro en móvil ---- */
+  #galeria {
+    background: #111;
+  }
+  #galeria .section-title {
+    color: var(--white);
+  }
+  #galeria .text-muted {
+    color: rgba(255,255,255,.55) !important;
+  }
 }
 
 @media (max-width: 767px) {
