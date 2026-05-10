@@ -835,6 +835,29 @@ footer {
   #galeria .text-muted {
     color: rgba(255,255,255,.55) !important;
   }
+
+  /* ---- Integrantes: oscuro en móvil ---- */
+  #grupo {
+    background: #0f0f0f;
+  }
+  #grupo .section-title {
+    color: var(--white);
+  }
+  #grupo .text-muted {
+    color: rgba(255,255,255,.55) !important;
+  }
+  #grupo .member-card {
+    background: #1a1a1a;
+    border: 1px solid rgba(184,151,58,.12);
+    box-shadow: 0 2px 16px rgba(0,0,0,.35);
+  }
+  #grupo .member-name {
+    color: var(--white);
+  }
+  #grupo .member-quote {
+    color: rgba(255,255,255,.52);
+    border-top-color: rgba(255,255,255,.08);
+  }
 }
 
 @media (max-width: 767px) {
