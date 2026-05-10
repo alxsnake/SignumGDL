@@ -326,10 +326,11 @@ section { padding: 6rem 0; }
 /* ===========================
    QUIÉNES SOMOS
 =========================== */
+#quienes { background: var(--cream); }
 #quienes .quote-block {
   border-left: 3px solid var(--gold);
   padding: 1.25rem 1.5rem;
-  background: var(--cream);
+  background: var(--cream-dark);
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
   font-family: 'Playfair Display', serif;
   font-style: italic;
@@ -779,11 +780,42 @@ footer {
 /* ===========================
    RESPONSIVE TWEAKS
 =========================== */
+
+/* Tablet y móvil: navbar siempre oscuro para no quedar
+   transparente sobre secciones claras al hacer scroll */
+@media (max-width: 991px) {
+  #navbar {
+    background: rgba(13,13,13,.97) !important;
+    box-shadow: 0 2px 16px rgba(0,0,0,.25);
+    padding: .75rem 0;
+  }
+  /* Menú desplegado: fondo oscuro y separación */
+  .navbar-collapse {
+    background: rgba(13,13,13,.97);
+    padding: .5rem 1rem 1.25rem;
+    border-top: 1px solid rgba(184,151,58,.15);
+    margin-top: .25rem;
+  }
+  /* Separador entre links en móvil */
+  .navbar-nav .nav-item + .nav-item {
+    border-top: 1px solid rgba(255,255,255,.06);
+  }
+  /* Estadísticas en hero: 2 columnas en móvil */
+  .hero-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem 2rem;
+  }
+}
+
 @media (max-width: 767px) {
   section { padding: 4rem 0; }
-  .hero-stats { gap: 1.5rem; }
   .hero-logo-box { width: 220px; height: 220px; }
   .hero-logo-text { font-size: 3rem; }
+  /* Album cover cuadrado: limitar altura en móvil */
+  .album-cover { aspect-ratio: 4/3; }
+  /* Gallery: dos columnas en móvil */
+  .gallery-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 /* ========================================
