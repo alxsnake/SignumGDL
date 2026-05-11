@@ -887,8 +887,8 @@ footer {
 }
 @keyframes floatNote {
   0%   { opacity: 0;   transform: translateY(0)      rotate(0deg); }
-  8%   { opacity: .08; }
-  85%  { opacity: .06; }
+  8%   { opacity: .35; }
+  85%  { opacity: .25; }
   100% { opacity: 0;   transform: translateY(-110vh) rotate(22deg); }
 }
 

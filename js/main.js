@@ -113,7 +113,7 @@ document.getElementById('year').textContent = new Date().getFullYear();
     const dur = 10 + Math.random() * 12;
     n.style.cssText = [
       `left:${4 + Math.random() * 92}%`,
-      `font-size:${0.75 + Math.random() * 1.25}rem`,
+      `font-size:${2.5 + Math.random() * 3}rem`,
       `animation-duration:${dur}s`,
       `animation-delay:${-(Math.random() * dur)}s`
     ].join(';');
